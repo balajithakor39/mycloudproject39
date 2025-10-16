@@ -1,0 +1,12 @@
+SurveillanceAI/
+├─ pom.xml
+├─ src/main/java/com/example/surveillance/
+│   ├─ Main.java
+│   ├─ SurveillanceApp.java
+│   ├─ MotionDetector.java
+│   ├─ FaceDetector.java
+│   └─ Utils.java
+├─ src/main/resources/
+│   └─ haarcascade_frontalface_default.xml
+├─ .gitignore
+└─ README.md

@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    environment {
+        APP_NAME = "mycloudapp"
+        IMAGE_NAME = "mycloudapp:latest"
+        CONTAINER_PORT = "8080"
+        HOST_PORT = "8080"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                echo "📥 Pulling code from GitHub..."
+                git branch: 'main', url: 'https://github.com/balajithakor39/mycloudproject39.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                    echo "🐳 Building Docker image..."
+                    docker build -t $IMAGE_NAME .
+                '''
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh '''
+                    echo "🚀 Running container..."
+                    docker ps -q --filter "name=$APP_NAME" | grep -q . && docker stop $APP_NAME && docker rm $APP_NAME
+                    docker run -d -p $HOST_PORT:$CONTAINER_PORT --name $APP_NAME $IMAGE_NAME
+                '''
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                sh '''
+                    echo "🧹 Cleaning unused Docker data..."
+                    docker system prune -f
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Build and Deployment Successful!"
+        }
+        failure {
+            echo "❌ Build Failed. Check console output for details."
+        }
+    }
+}
